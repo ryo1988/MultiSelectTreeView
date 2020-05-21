@@ -42,16 +42,14 @@ namespace MultiSelectTreeView
             if (treeViewItem != null && treeView != null)
             {
                 var selectedItems = GetSelectedItems(treeView);
-                if (selectedItems != null)
+                if (GetIsItemSelected(treeViewItem))
                 {
-                    if (GetIsItemSelected(treeViewItem))
-                    {
-                        selectedItems.Add(treeViewItem.Header);
-                    }
-                    else
-                    {
-                        selectedItems.Remove(treeViewItem.Header);
-                    }
+                    selectedItems?.Add(treeViewItem.Header);
+                    treeViewItem.Focus();
+                }
+                else
+                {
+                    selectedItems?.Remove(treeViewItem.Header);
                 }
             }
         }
@@ -95,7 +93,8 @@ namespace MultiSelectTreeView
                 return;
             }
 
-            SelectItems(treeViewItem, sender as TreeView);
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+                SelectItems(treeViewItem, sender as TreeView);
         }
 
         private static void SelectItems(TreeViewItem treeViewItem, TreeView treeView)
