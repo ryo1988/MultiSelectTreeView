@@ -155,22 +155,22 @@ namespace MultiSelectTreeView
         private static void SelectSingleItem(TreeView treeView, TreeViewItem treeViewItem)
         {
             // first deselect all items
-            DeSelectAllItems(treeView, null);
+            DeSelectAllItems(treeView, null, treeViewItem);
             SetIsItemSelected(treeViewItem, true);
             SetStartItem(treeView, treeViewItem);
         }
 
-        private static void DeSelectAllItems(TreeView treeView, TreeViewItem treeViewItem)
+        private static void DeSelectAllItems(TreeView treeView, TreeViewItem treeViewItem, TreeViewItem ignoreItem)
         {
             if (treeView != null)
             {
                 for (int i = 0; i < treeView.Items.Count; i++)
                 {
                     var item = treeView.ItemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
-                    if (item != null)
+                    if (item != null && item != ignoreItem)
                     {
                         SetIsItemSelected(item, false);
-                        DeSelectAllItems(null, item);
+                        DeSelectAllItems(null, item, ignoreItem);
                     }
                 }
             }
@@ -179,10 +179,10 @@ namespace MultiSelectTreeView
                 for (int i = 0; i < treeViewItem.Items.Count; i++)
                 {
                     var item = treeViewItem.ItemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
-                    if (item != null)
+                    if (item != null && item != ignoreItem)
                     {
                         SetIsItemSelected(item, false);
-                        DeSelectAllItems(null, item);
+                        DeSelectAllItems(null, item, ignoreItem);
                     }
                 }
             }
