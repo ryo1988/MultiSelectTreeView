@@ -167,9 +167,10 @@ namespace MultiSelectTreeView
                 for (int i = 0; i < treeView.Items.Count; i++)
                 {
                     var item = treeView.ItemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
-                    if (item != null && item != ignoreItem)
+                    if (item != null)
                     {
-                        SetIsItemSelected(item, false);
+                        if (item != ignoreItem)
+                            SetIsItemSelected(item, false);
                         DeSelectAllItems(null, item, ignoreItem);
                     }
                 }
@@ -179,9 +180,10 @@ namespace MultiSelectTreeView
                 for (int i = 0; i < treeViewItem.Items.Count; i++)
                 {
                     var item = treeViewItem.ItemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
-                    if (item != null && item != ignoreItem)
+                    if (item != null)
                     {
-                        SetIsItemSelected(item, false);
+                        if (item != ignoreItem)
+                            SetIsItemSelected(item, false);
                         DeSelectAllItems(null, item, ignoreItem);
                     }
                 }
