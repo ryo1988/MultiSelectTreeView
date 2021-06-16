@@ -45,7 +45,7 @@ namespace MultiSelectTreeView
                 if (GetIsItemSelected(treeViewItem))
                 {
                     selectedItems?.Add(treeViewItem.Header);
-                    treeViewItem.Focus();
+                    treeViewItem.BringIntoView();
                 }
                 else
                 {
