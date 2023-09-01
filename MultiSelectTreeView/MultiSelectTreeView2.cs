@@ -86,7 +86,11 @@ namespace MultiSelectTreeView
             if (e.OriginalSource is TreeView) return;
 
             var treeView = FindTreeView(e.OriginalSource as DependencyObject);
+            if (treeView is null)
+                return;
+            
             var treeViewItem = FindTreeViewItem(e.OriginalSource as DependencyObject);
+            
             if (Mouse.LeftButton == MouseButtonState.Pressed && treeView.IsSelected(treeViewItem) && Keyboard.Modifiers != ModifierKeys.Control)
             {
                 _selectTreeViewItemOnMouseUp = treeViewItem;
