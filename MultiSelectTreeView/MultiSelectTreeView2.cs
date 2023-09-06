@@ -160,7 +160,7 @@ namespace MultiSelectTreeView
         {
             // first deselect all items
             var item = treeView.ItemFromContainer(treeViewItem);
-            var selectedItems = Array.CreateInstance(item.GetType(), 1);
+            var selectedItems = Array.CreateInstance(treeView.GetItemType() ?? item.GetType(), 1);
             selectedItems.SetValue(item, 0);
             SetSelectedItems(treeView, selectedItems);
             treeView._startItem = item;
@@ -188,7 +188,7 @@ namespace MultiSelectTreeView
                     .OfType<object>()
                     .Except(new []{item})
                     .ToArray();
-                var array = Array.CreateInstance(item.GetType(), selectedItems.Length);
+                var array = Array.CreateInstance(treeView.GetItemType() ?? item.GetType(), selectedItems.Length);
                 Array.Copy(selectedItems, array, selectedItems.Length);
                 SetSelectedItems(treeView, array);
             }
@@ -198,7 +198,7 @@ namespace MultiSelectTreeView
                     .OfType<object>()
                     .Concat(new []{item})
                     .ToArray();
-                var array = Array.CreateInstance(item.GetType(), selectedItems.Length);
+                var array = Array.CreateInstance(treeView.GetItemType() ?? item.GetType(), selectedItems.Length);
                 Array.Copy(selectedItems, array, selectedItems.Length);
                 SetSelectedItems(treeView, array);
             }
@@ -263,10 +263,21 @@ namespace MultiSelectTreeView
                         selectedItems.Remove(item);
                 }
 
-                var array = Array.CreateInstance(treeViewItemItem.GetType(), selectedItems.Count);
+                var array = Array.CreateInstance(treeView.GetItemType() ?? treeViewItemItem.GetType(), selectedItems.Count);
                 Array.Copy(selectedItems.ToArray(), array, selectedItems.Count);
                 SetSelectedItems(treeView, array);
             }
+        }
+
+        private Type GetItemType()
+        {
+            var bindingExpression = GetBindingExpression(SelectedItemsProperty);
+            if (bindingExpression is null)
+                return null;
+            
+            return bindingExpression.ResolvedSource.GetType()
+                .GetProperty(bindingExpression.ResolvedSourcePropertyName)?
+                .PropertyType.GetElementType();
         }
     }
 }
