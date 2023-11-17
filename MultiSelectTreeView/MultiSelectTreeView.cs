@@ -17,7 +17,8 @@ namespace MultiSelectTreeView
             PreviewMouseLeftButtonUp += OnTreeViewItemPreviewMouseUp;
         }
 
-        private static TreeViewItem _selectTreeViewItemOnMouseUp;
+        private TreeViewItem _selectTreeViewItemOnMouseUp;
+        private bool _bringIntoViewWhenSelected = true;
 
 
         public static readonly DependencyProperty IsItemSelectedProperty = DependencyProperty.RegisterAttached("IsItemSelected", typeof(Boolean), typeof(MultiSelectTreeView), new PropertyMetadata(false, OnIsItemSelectedPropertyChanged));
@@ -44,7 +45,10 @@ namespace MultiSelectTreeView
                 if (GetIsItemSelected(treeViewItem))
                 {
                     selectedItems?.Add(treeViewItem.Header);
-                    treeViewItem.BringIntoView();
+                    if (treeView._bringIntoViewWhenSelected)
+                    {
+                        treeViewItem.BringIntoView();
+                    }
                 }
                 else
                 {
@@ -81,22 +85,24 @@ namespace MultiSelectTreeView
 
         private static void OnTreeViewItemGotFocus(object sender, RoutedEventArgs e)
         {
-            _selectTreeViewItemOnMouseUp = null;
+            var treeView = (MultiSelectTreeView)sender;
+            
+            treeView._selectTreeViewItemOnMouseUp = null;
 
             if (e.OriginalSource is TreeView) return;
 
             var treeViewItem = FindTreeViewItem(e.OriginalSource as DependencyObject);
             if (Mouse.LeftButton == MouseButtonState.Pressed && GetIsItemSelected(treeViewItem) && Keyboard.Modifiers != ModifierKeys.Control)
             {
-                _selectTreeViewItemOnMouseUp = treeViewItem;
+                treeView._selectTreeViewItemOnMouseUp = treeViewItem;
                 return;
             }
 
             if (Mouse.LeftButton == MouseButtonState.Pressed)
-                SelectItems(treeViewItem, sender as TreeView);
+                SelectItems(treeViewItem, sender as MultiSelectTreeView);
         }
 
-        private static void SelectItems(TreeViewItem treeViewItem, TreeView treeView)
+        private static void SelectItems(TreeViewItem treeViewItem, MultiSelectTreeView treeView)
         {
             if (treeViewItem != null && treeView != null)
             {
@@ -130,10 +136,11 @@ namespace MultiSelectTreeView
         private static void OnTreeViewItemPreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             var treeViewItem = FindTreeViewItem(e.OriginalSource as DependencyObject);
+            var treeView = (MultiSelectTreeView)sender;
 
-            if (treeViewItem == _selectTreeViewItemOnMouseUp)
+            if (treeViewItem == treeView._selectTreeViewItemOnMouseUp)
             {
-                SelectItems(treeViewItem, sender as TreeView);
+                SelectItems(treeViewItem, sender as MultiSelectTreeView);
             }
         }
 
@@ -189,14 +196,14 @@ namespace MultiSelectTreeView
             }
         }
 
-        private static TreeView FindTreeView(DependencyObject dependencyObject)
+        private static MultiSelectTreeView FindTreeView(DependencyObject dependencyObject)
         {
             if (dependencyObject == null)
             {
                 return null;
             }
 
-            var treeView = dependencyObject as TreeView;
+            var treeView = dependencyObject as MultiSelectTreeView;
 
             return treeView ?? FindTreeView(VisualTreeHelper.GetParent(dependencyObject));
         }
@@ -220,7 +227,7 @@ namespace MultiSelectTreeView
             }
         }
 
-        private static void SelectMultipleItemsContinuously(TreeView treeView, TreeViewItem treeViewItem, bool shiftControl = false)
+        private static void SelectMultipleItemsContinuously(MultiSelectTreeView treeView, TreeViewItem treeViewItem, bool shiftControl = false)
         {
             TreeViewItem startItem = GetStartItem(treeView);
             if (startItem != null)
@@ -234,6 +241,7 @@ namespace MultiSelectTreeView
                 ICollection<TreeViewItem> allItems = new List<TreeViewItem>();
                 GetAllItems(treeView, null, allItems);
                 //DeSelectAllItems(treeView, null);
+                treeView._bringIntoViewWhenSelected = false;
                 bool isBetween = false;
                 foreach (var item in allItems)
                 {
@@ -257,6 +265,7 @@ namespace MultiSelectTreeView
                     if (!shiftControl)
                         SetIsItemSelected(item, false);
                 }
+                treeView._bringIntoViewWhenSelected = true;
             }
         }
 
