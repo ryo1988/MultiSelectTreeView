@@ -13,7 +13,6 @@ namespace MultiSelectTreeView
     {
         public MultiSelectTreeView()
         {
-            GotFocus += OnTreeViewItemGotFocus;
             PreviewMouseLeftButtonDown += OnTreeViewItemPreviewMouseDown;
             PreviewMouseLeftButtonUp += OnTreeViewItemPreviewMouseUp;
         }
@@ -124,7 +123,7 @@ namespace MultiSelectTreeView
         {
             var treeViewItem = FindTreeViewItem(e.OriginalSource as DependencyObject);
 
-            if (treeViewItem != null && treeViewItem.IsFocused)
+            if (treeViewItem != null)
                 OnTreeViewItemGotFocus(sender, e);
         }
 
