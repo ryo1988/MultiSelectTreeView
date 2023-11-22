@@ -43,10 +43,10 @@ namespace MultiSelectTreeView
         private static void SelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (MultiSelectTreeView2)d;
-            self.SelectedItemsChanged(e);
+            self.SelectedItemsChanged();
         }
 
-        private void SelectedItemsChanged(DependencyPropertyChangedEventArgs e)
+        private void SelectedItemsChanged()
         {
             _selectedItemsHashSet = GetSelectedItems(this).OfType<object>().ToImmutableHashSet();
         }
