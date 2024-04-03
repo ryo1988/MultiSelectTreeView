@@ -51,6 +51,15 @@ namespace MultiSelectTreeView
             _selectedItemsHashSet = GetSelectedItems(this).OfType<object>().ToImmutableHashSet();
         }
 
+        public static readonly DependencyProperty EnableContinuouslySelectProperty = DependencyProperty.Register(
+            nameof(EnableContinuouslySelect), typeof(bool), typeof(MultiSelectTreeView2), new PropertyMetadata(true));
+
+        public bool EnableContinuouslySelect
+        {
+            get { return (bool)GetValue(EnableContinuouslySelectProperty); }
+            set { SetValue(EnableContinuouslySelectProperty, value); }
+        }
+
         private bool IsSelected(object item)
         {
             return _selectedItemsHashSet.Contains(item);
@@ -105,7 +114,7 @@ namespace MultiSelectTreeView
         {
             if (treeViewItem != null && treeView != null)
             {
-                if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
+                if (treeView.EnableContinuouslySelect && (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) == (ModifierKeys.Control | ModifierKeys.Shift))
                 {
                     SelectMultipleItemsContinuously(treeView, treeViewItem, true);
                 }
@@ -113,7 +122,7 @@ namespace MultiSelectTreeView
                 {
                     SelectMultipleItemsRandomly(treeView, treeViewItem);
                 }
-                else if (Keyboard.Modifiers == ModifierKeys.Shift)
+                else if (treeView.EnableContinuouslySelect && Keyboard.Modifiers == ModifierKeys.Shift)
                 {
                     SelectMultipleItemsContinuously(treeView, treeViewItem);
                 }
